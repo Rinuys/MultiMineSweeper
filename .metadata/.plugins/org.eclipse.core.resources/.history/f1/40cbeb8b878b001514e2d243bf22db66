@@ -1,0 +1,17 @@
+import javax.swing.*;
+
+class OhMyButton extends JFrame{
+	private JPanel myPanel = new JPanel();
+	
+	OhMyButton(){
+		JButton myButton = new JButton("Test");
+	}
+}
+public class MyButton {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

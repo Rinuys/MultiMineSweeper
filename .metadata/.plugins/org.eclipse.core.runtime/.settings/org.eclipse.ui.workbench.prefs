@@ -1,0 +1,7 @@
+//org.eclipse.ui.commands/state/org.eclipse.ui.navigator.resources.nested.changeProjectPresentation/org.eclipse.ui.commands.radioState=false
+ColorsAndFontsPreferencePage.expandedCategories=Torg.eclipse.debug.ui.presentation
+ColorsAndFontsPreferencePage.selectedElement=Corg.eclipse.jdt.debug.ui.InDeadlockColor
+PLUGINS_NOT_ACTIVATED_ON_STARTUP=org.eclipse.m2e.discovery;
+eclipse.preferences.version=1
+org.eclipse.debug.ui.VariableTextFont=1|\uB9D1\uC740 \uACE0\uB515|12.0|0|WINDOWS|1|-16|0|0|0|400|0|0|0|-127|3|2|1|50|\uB9D1\uC740 \uACE0\uB515;
+org.eclipse.debug.ui.consoleFont=1|Consolas|12.0|0|WINDOWS|1|-16|0|0|0|400|0|0|0|0|3|2|1|49|Consolas;
