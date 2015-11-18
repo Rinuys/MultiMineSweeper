@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
-#include"stdbool.h"
+#include<stdbool.h>
 
 #define SIZE_X 10
 #define SIZE_Y 10
@@ -11,9 +11,10 @@ void initGameArray();
 void initPublicArray();
 void makeGameArray(int xi,int yi);
 void setPublic(int x, int y);
+void printArray();
 
 int gamearray[SIZE_X][SIZE_Y];
-int publicarray[SIZE_X][SIZE_Y];
+bool publicarray[SIZE_X][SIZE_Y];
 
 void initGameArray(){
 	int i,j;
@@ -28,7 +29,7 @@ void initPublicArray(){
 	int i,j;
 	for(i = 0 ; i < SIZE_X ;i++){
 		for(j = 0 ; j < SIZE_Y ; j++){
-			publicarray[i][j]=0;
+			publicarray[i][j]=false;
 		}
 	}
 }
@@ -40,6 +41,9 @@ void printGameArray(){
 			if(publicarray[i][j]){
 				printf("%d ",gamearray[i][j]);
 			}
+			else{
+				printf("* ");
+			}
 		}
 		printf("\n");
 	}
@@ -47,8 +51,29 @@ void printGameArray(){
 }
 
 void setPublic(int x, int y){
-	publicarray[x][y] = true;
+	if(publicarray[x][y] == true) return;
+        publicarray[x][y] = true;
+	if(gamearray[x][y] == 0){
+                if(x-1>=0 && y-1>=0)
+                        setPublic(x-1,y-1);
+                if(x+1<SIZE_X && y-1>=0)
+			setPublic(x+1,y-1);
+		if(x+1<SIZE_X && y+1<SIZE_Y)
+			setPublic(x+1,y+1);
+		if(x-1>=0 && y+1<SIZE_Y)
+			setPublic(x-1,y+1);
+                if(x-1>=0)
+                        setPublic(x-1,y);
+                if(y-1>=0)
+                        setPublic(x,y-1);
+                if(x+1<SIZE_X)
+                        setPublic(x+1,y);
+                if(y+1<SIZE_Y)
+                        setPublic(x,y+1);
+        }
+        
 }
+
 
 void makeGameArray(int xi, int yi){
 	int i=0;
@@ -82,7 +107,6 @@ void makeGameArray(int xi, int yi){
 			}
 		}
 	}
-	printGameArray();
 }
 
 void startGame(){
@@ -92,9 +116,11 @@ void startGame(){
 	initGameArray();
 	makeGameArray(x,y);
 	setPublic(x,y);
+	printGameArray();
 	while(1){
 		scanf("%d %d",&x,&y);
-		printArray();
+		setPublic(x,y);
+		printGameArray();
 	}
 	
 }
