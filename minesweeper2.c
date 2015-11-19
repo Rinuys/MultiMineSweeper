@@ -3,18 +3,23 @@
 #include<time.h>
 #include<stdbool.h>
 
-#define SIZE_X 10
-#define SIZE_Y 10
+#define SIZE_X 20
+#define SIZE_Y 20
 #define NUMBER_OF_MINE (SIZE_X*SIZE_Y/4)
+#define MAX_BUF_SIZE SIZE_X*SIZE_Y
 
 void initGameArray();
 void initPublicArray();
 void makeGameArray(int xi,int yi);
 void setPublic(int x, int y);
 void printArray();
+void setPointBuffer(int x, int y);
+void printPointBuffer();
 
 int gamearray[SIZE_X][SIZE_Y];
 bool publicarray[SIZE_X][SIZE_Y];
+int pointbuffer[MAX_BUF_SIZE][2];     // pointbuffer[][0] : x      pointbuffer[][1] : y
+int top_buffer = 0;
 
 void initGameArray(){
 	int i,j;
@@ -34,6 +39,14 @@ void initPublicArray(){
 	}
 }
 
+void initPointBuffer(){
+	int i;
+	for(i=0;i<MAX_BUF_SIZE;i++){
+		pointbuffer[i][0]=0;
+		pointbuffer[i][1]=0;
+	}
+}
+
 void printGameArray(){
 	int i,j;
 	for(i = 0 ; i<SIZE_X;i++){
@@ -47,12 +60,29 @@ void printGameArray(){
 		}
 		printf("\n");
 	}
+	printPointBuffer();
 	printf("\n");
+}
+
+void printPointBuffer(){
+	int i;
+	for(i=0;i<top_buffer;i++){
+		printf("(%d,%d), ",pointbuffer[i][0],pointbuffer[i][1]);
+		if(i%5==1) printf("\n");
+	}
+	printf("\n");
+}
+
+void setPointBuffer(int x, int y){
+	pointbuffer[top_buffer][0]=x;
+	pointbuffer[top_buffer][1]=y;
+	top_buffer++;
 }
 
 void setPublic(int x, int y){
 	if(publicarray[x][y] == true) return;
         publicarray[x][y] = true;
+	setPointBuffer(x,y);
 	if(gamearray[x][y] == 0){
                 if(x-1>=0 && y-1>=0)
                         setPublic(x-1,y-1);
@@ -111,6 +141,7 @@ void makeGameArray(int xi, int yi){
 
 void startGame(){
 	int x,y;
+	srand((unsigned)time(0));
 	initPublicArray();
 	scanf("%d %d",&x,&y);
 	initGameArray();
@@ -127,9 +158,6 @@ void startGame(){
 
 
 int main(){                 // 0~8 : number of mine     9 : mine
-	srand((unsigned)time(0));
 	startGame();
-	
-	
 	return 0;
 }
