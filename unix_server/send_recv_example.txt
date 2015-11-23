@@ -1,0 +1,27 @@
+send examples
+
+
+if ((nbytes = recv(i, buf, sizeof buf, 0)) <= 0) {
+	// got error or connection closed by client
+	if (nbytes == 0) {
+		// connection closed
+		printf("selectserver: socket %d hung up\n", i);
+	} else {
+		perror("recv");
+	}
+	close(i); // bye!
+	FD_CLR(i, &read_fds); // remove from read_fds set
+} else {
+	// we got some data from a client
+	for(j = 0; j <= fdmax; j++) {
+		// send to everyone!
+		if (FD_ISSET(j, &read_fds)) {
+			// except the listener and ourselves
+			if (j != listener && j != i) {
+				if (send(j, buf, nbytes, 0) == -1) {
+					perror("send");
+				}
+			}
+		}
+	}
+}
