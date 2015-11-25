@@ -1,12 +1,16 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.StringTokenizer;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 class MineButton{
 	private static String message;
@@ -59,6 +63,7 @@ class MineButton{
 	public void clickButton(){
 		message = " "+x+" "+y;
 		System.out.println(message);
+		button.setIcon(buttonIcon[0]);
 		
 		enableSelect = false;
 		boardMaster.setTurn(-1);
@@ -75,34 +80,66 @@ class MineButton{
 class MineSweeper extends JFrame{
 	private int currentTurn = -1; // turn : 0~3, -1 : nobody have turn.
 	private int myNum = -1;       // identifier. -1 : no have identifier.
-	private JPanel myPanel = new JPanel();
+	private JPanel buttonSetPanel = new JPanel();
+	private JPanel readyPanel = new JPanel();
+	private JButton readyButton;
 	public MineButton[][] mineButtonSet;
 	
 	MineSweeper(){
-		int mineSweeperBoardX = 200;
-		int mineSweeperBoardY = 10;
 		int buttonSize = 30;
+		int numOfButtonX = 25;
+		int numOfButtonY = 25;
+		int boardX = 200;
+		int boardY = 10;
+		int readyButtonSizeX = 200;
+		int readyButtonSizeY = 60;
+		
+		int boardSizeX = numOfButtonX * buttonSize;
+		int boardSizeY = numOfButtonY * buttonSize;
+		int frameSizeX = 400 + boardSizeX;
+		int frameSizeY = 150 + boardSizeY;
+		int readyPanelSizeX = boardSizeX / 3 * 2;
+		int readyPanelSizeY = (frameSizeY - boardSizeY) / 3 * 2;
+		
+		this.setTitle("MultiMineSweeper");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mineButtonSet = new MineButton[20][];
+		this.setLayout(null);
+		setSize(frameSizeX,frameSizeY);
+		mineButtonSet = new MineButton[numOfButtonX][];
 		
-		myPanel.setLayout(null);
+		buttonSetPanel.setLayout(null);
 		
-		for(int i=0;i<20;i++){
-			mineButtonSet[i] = new MineButton[20];
+		buttonSetPanel.setSize(boardSizeX, boardSizeY);
+		buttonSetPanel.setLocation(200, 10);
+		
+		for(int i=0;i<numOfButtonX;i++){
+			mineButtonSet[i] = new MineButton[numOfButtonY];
 			for(int j=0;j<mineButtonSet[i].length;j++){
 				mineButtonSet[i][j] = new MineButton(i,j,buttonSize);
-				mineButtonSet[i][j].getButton().setLocation(mineSweeperBoardX+i*buttonSize, mineSweeperBoardY+j*buttonSize);
-				myPanel.add(mineButtonSet[i][j].getButton());
+				mineButtonSet[i][j].getButton().setLocation(i*buttonSize, j*buttonSize);
+				buttonSetPanel.add(mineButtonSet[i][j].getButton());
 			}
 		}
 		MineButton.setMaster(this);
 		MineButton.setIcon();
 		
-		setSize(1000,800);
+		readyPanel.setLayout(null);
+		readyPanel.setSize(readyPanelSizeX, readyPanelSizeY);
+		readyPanel.setLocation(boardX + boardSizeX / 2 - readyPanelSizeX / 2, boardY + boardSizeY + 10);
+		readyPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+		
+		readyButton = new JButton("READY");
+		
+		readyButton.setSize(readyButtonSizeX,readyButtonSizeY);
+		readyButton.setLocation((readyPanelSizeX - readyButtonSizeX) / 2, (readyPanelSizeY - readyButtonSizeY) / 2);
+		readyPanel.add(readyButton);
+		
+		
 		setResizable(false);
 		
 		
-		this.add(myPanel);
+		this.add(buttonSetPanel);
+		this.add(readyPanel);
 		this.setVisible(true);
 	}
 
