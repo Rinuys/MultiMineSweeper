@@ -1,7 +1,8 @@
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
@@ -10,19 +11,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
-class MineButton{
+class MineButton extends MouseAdapter{
 	private static String message;
 	private static boolean enableSelect = true;
 	private static MineSweeper boardMaster;
-	private static Icon[] buttonIcon = new ImageIcon[10];
+	private static Icon[] buttonIcon = new ImageIcon[11];
 
 	private JButton button;
 	private int x;
 	private int y;
-	private boolean flag;
-	private boolean selected;
+	private boolean flag = false;
 	
 
 	MineButton(int x, int y, int size){
@@ -33,6 +32,7 @@ class MineButton{
 		
 		
 		button.addActionListener(new mineButtonSetListener());
+		button.addMouseListener(this);
 		button.setSize(size,size);
 		
 	}
@@ -44,6 +44,19 @@ class MineButton{
 			}
 		}
 	}
+	public void mouseClicked(MouseEvent e){
+		if(e.getModifiers() == MouseEvent.BUTTON3_MASK){
+			if(flag){
+				button.setIcon(null);
+				flag = false;
+			}
+			else{
+				button.setIcon(buttonIcon[10]);
+				flag = true;
+			}
+		}
+	}
+	
 	public static void setEnableSelect(boolean b){
 		enableSelect = b;
 	}
@@ -79,16 +92,23 @@ class MineButton{
 }
 class MineSweeper extends JFrame{
 	private int currentTurn = -1; // turn : 0~3, -1 : nobody have turn.
-	private int myNum = -1;       // identifier. -1 : no have identifier.
+	private int myNum;       // identifier. -1 : no have identifier.
 	private JPanel buttonSetPanel = new JPanel();
 	private JPanel readyPanel = new JPanel();
 	private JButton readyButton;
+	private boolean ready = false;
+	private boolean start = false;
 	public MineButton[][] mineButtonSet;
+	private String readyMessage;
 	
-	MineSweeper(){
+	
+	MineSweeper(int num){
+		myNum = num;
+		readyMessage = "";
+		
 		int buttonSize = 30;
-		int numOfButtonX = 25;
-		int numOfButtonY = 25;
+		int numOfButtonX = 18;
+		int numOfButtonY = 18;
 		int boardX = 200;
 		int boardY = 10;
 		int readyButtonSizeX = 200;
@@ -108,7 +128,6 @@ class MineSweeper extends JFrame{
 		mineButtonSet = new MineButton[numOfButtonX][];
 		
 		buttonSetPanel.setLayout(null);
-		
 		buttonSetPanel.setSize(boardSizeX, boardSizeY);
 		buttonSetPanel.setLocation(200, 10);
 		
@@ -129,9 +148,9 @@ class MineSweeper extends JFrame{
 		readyPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 		
 		readyButton = new JButton("READY");
-		
 		readyButton.setSize(readyButtonSizeX,readyButtonSizeY);
 		readyButton.setLocation((readyPanelSizeX - readyButtonSizeX) / 2, (readyPanelSizeY - readyButtonSizeY) / 2);
+		readyButton.addActionListener(new ReadyButtonListener());
 		readyPanel.add(readyButton);
 		
 		
@@ -142,8 +161,43 @@ class MineSweeper extends JFrame{
 		this.add(readyPanel);
 		this.setVisible(true);
 	}
-
+	
+	private class ReadyButtonListener implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			if(!start){
+				if(ready){
+					ready = false;
+					readyMessage = "\0"+myNum + "__F\0";
+					
+				}
+				else{
+					ready = true;
+					readyMessage = "\0"+myNum + "__T\0";
+				}
+			}
+		}
+	}
+	public String getReadyMessage(){
+		return readyMessage;
+	}
+	public void initReadyMessage(){
+		readyMessage = "";
+	}
+	public void gameStart(){
+		start = true;
+		MineButton.setEnableSelect(true);
+	}
+	public void setReady(boolean b){
+		ready = b;
+	}
+	public void setStart(boolean b){
+		start = b;
+	}
+	public boolean getStart(){
+		return start;
+	}
 	public void clickButtonAuto(String data){
+		//  parsing 후 버튼 자동 누르기
 		int x;
 		int y;
 		int num;
@@ -162,8 +216,11 @@ class MineSweeper extends JFrame{
 		myNum = num;
 	}
 	public void checkTurn(){
-		if(myNum != -1 && currentTurn == myNum){
+		if(currentTurn == myNum){
 			MineButton.setEnableSelect(true);
+		}
+		else{
+			MineButton.setEnableSelect(false);
 		}
 	}
 }
@@ -171,7 +228,7 @@ public class MineSweeperGUI {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		MineSweeper m = new MineSweeper();
+		MineSweeper m = new MineSweeper(1);
 
 		m.clickButtonAuto("(3,3,8)");
 	}
