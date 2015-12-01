@@ -1,0 +1,37 @@
+
+message from server to client
+
+No___  // send you can't participant room (6 bytes)
+	방을 malloc 과 fork로 새로 만들어서 관리. 웬만하면 사용할일이 없음.
+	서버 메인에서 각각의프로세스 정보를 동적 배열로 관리. 부족하면 realloc 사용.
+
+00_00 // send Room Number and client member number, (6 bytes)
+00*00 // mine map size
+
+Exi00 // 너가 드라
+New00 // broadcast participant new member first digit is 
+
+Istok  // give turn to a client.
+	tok00 // 누가 턴인지 알려줌.
+
+Start // broadcast all. after all member ready
+
+00-00 // recv pushed position from client has token, broadcast all (from 0,0 to n-1,m-1)
+	0~9 // send position value to all. (2 bytes)
+	
+Bye00  // client end connection, broadcast another. and end connection.
+Kic00  // client push mine. broadcast all. and end connection. 00 is client member number.
+Ended  // send all remained client after game ended. and end connection
+
+
+
+
+
+message from client to server
+
+Ready // 
+	Ready로 바꿔서 멤버가 모두 보내면 방이 시작됨.
+	레디한 사람 표시 (멤버 숫자)
+
+00-00 // send push position
+Bye00 // client end up connection 00 is client member number.
